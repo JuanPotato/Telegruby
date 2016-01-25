@@ -59,7 +59,7 @@ module Telegruby
     end
    
     # Sends a photo message to a chat id
-    def send_photo(id, filename: nil, file_id: nil, reply: nil)
+    def send_photo(id, filename: nil, file_id: nil, reply: nil, caption: nil)
       options = {
         :chat_id => id,
       }
@@ -72,17 +72,25 @@ module Telegruby
       if !reply.nil?
         options.merge!(:reply_to_message_id => reply)
       end
+     
+      if !caption.nil?
+        options.merge!(:caption => caption)
+      end
 
       self.post_request("sendPhoto", options)
     end
 
     # Sends a photo from a byte string
-    def send_photo_bytestring(id, str, reply: nil)
+    def send_photo_bytestring(id, str, reply: nil, caption: nil)
       Tempfile.open(["img", ".jpg"]) { |f|
         f.binmode
         f.write(str)
        
-        self.send_photo(id, filename: f.path, reply: reply)
+        if !caption.nil?
+          options.merge!(:caption => caption)
+        end
+       
+        self.send_photo(id, filename: f.path, reply: reply, caption: caption)
       }
     end
 
@@ -137,7 +145,7 @@ module Telegruby
       self.post_request("sendAudio", options)
     end
 
-    def send_video(id, filename: nil, file_id: nil, reply: nil)
+    def send_video(id, filename: nil, file_id: nil, reply: nil, caption: nil)
       options = {
         :chat_id => id,
       }
@@ -149,6 +157,10 @@ module Telegruby
 
       if !reply.nil?
         options.merge!(:reply_to_message_id => reply)
+      end
+     
+      if !caption.nil?
+        options.merge!(:caption => caption)
       end
 
       self.post_request("sendVideo", options)
